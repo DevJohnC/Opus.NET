@@ -34,6 +34,6 @@ Opus.NET is licensed under the MIT license.
 
 A copy of all licenses are available in the repository.
 
-[Opus Distributed License](https://github.com/JohnACarruthers/Opus.NET/blob/master/opus license.txt)
-[NAudio Distributed License](https://github.com/JohnACarruthers/Opus.NET/blob/master/naudio license.txt)
-[Opus.NET License](https://github.com/JohnACarruthers/Opus.NET/blob/master/license.txt)
+* [Opus Distributed License](https://github.com/JohnACarruthers/Opus.NET/blob/master/opus license.txt)
+* [NAudio Distributed License](https://github.com/JohnACarruthers/Opus.NET/blob/master/naudio license.txt)
+* [Opus.NET License](https://github.com/JohnACarruthers/Opus.NET/blob/master/license.txt)
