@@ -41,7 +41,7 @@ namespace FragLabs.Audio.Codecs
             _decoder = decoder;
             OutputSamplingRate = outputSamplingRate;
             OutputChannels = outputChannels;
-            MaxDataBytes = 16000;
+            MaxDataBytes = 4000;
         }
 
         /// <summary>
