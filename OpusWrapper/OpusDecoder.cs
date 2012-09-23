@@ -48,29 +48,28 @@ namespace FragLabs.Audio.Codecs
         /// Produces PCM samples from Opus encoded data.
         /// </summary>
         /// <param name="inputOpusData">Opus encoded data to decode.</param>
+        /// <param name="dataLength">Length of data to decode.</param>
+        /// <param name="decodedLength">Set to the length of the decoded sample data.</param>
         /// <returns>PCM audio samples.</returns>
-        public unsafe byte[] Decode(byte[] inputOpusData)
+        public unsafe byte[] Decode(byte[] inputOpusData, int dataLength, out int decodedLength)
         {
             if (disposed)
                 throw new ObjectDisposedException("OpusDecoder");
 
             IntPtr decodedPtr;
-            var rand = new Random();
             byte[] decoded = new byte[MaxDataBytes];
-            rand.NextBytes(decoded);
             int frameCount = FrameCount(MaxDataBytes);
             int length = 0;
             fixed (byte* bdec = decoded)
             {
                 decodedPtr = new IntPtr((void*)bdec);
-                length = API.opus_decode(_decoder, inputOpusData, inputOpusData.Length, decodedPtr, frameCount, 0);
+                length = API.opus_decode(_decoder, inputOpusData, dataLength, decodedPtr, frameCount, 0);
             }
+            decodedLength = length * 2;
             if (length < 0)
                 throw new Exception("Decoding failed - " + ((Errors)length).ToString());
 
-            byte[] fixedDecoded = new byte[length * 2];
-            Array.Copy(decoded, fixedDecoded, length * 2);
-            return fixedDecoded;
+            return decoded;
         }
 
         /// <summary>

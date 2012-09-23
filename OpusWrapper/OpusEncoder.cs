@@ -51,8 +51,10 @@ namespace FragLabs.Audio.Codecs
         /// Produces Opus encoded audio from PCM samples.
         /// </summary>
         /// <param name="inputPcmSamples">PCM samples to encode.</param>
-        /// <returns>Opus encoded audio.</returns>
-        public unsafe byte[] Encode(byte[] inputPcmSamples)
+        /// <param name="sampleLength">How many bytes to encode.</param>
+        /// <param name="encodedLength">Set to length of encoded audio.</param>
+        /// <returns>Opus encoded audio buffer.</returns>
+        public unsafe byte[] Encode(byte[] inputPcmSamples, int sampleLength, out int encodedLength)
         {
             if (disposed)
                 throw new ObjectDisposedException("OpusEncoder");
@@ -64,14 +66,13 @@ namespace FragLabs.Audio.Codecs
             fixed (byte* benc = encoded)
             {
                 encodedPtr = new IntPtr((void*)benc);
-                length = API.opus_encode(_encoder, inputPcmSamples, frames, encodedPtr, encoded.Length);
+                length = API.opus_encode(_encoder, inputPcmSamples, frames, encodedPtr, sampleLength);
             }
+            encodedLength = length;
             if (length < 0)
                 throw new Exception("Encoding failed - " + ((Errors)length).ToString());
 
-            byte[] fixedEncoded = new byte[length];
-            Array.Copy(encoded, fixedEncoded, length);
-            return fixedEncoded;
+            return encoded;
         }
 
         /// <summary>

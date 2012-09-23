@@ -63,7 +63,7 @@ namespace OpusDemo
             _decoder = OpusDecoder.Create(48000, 1);
             _bytesPerSegment = _encoder.FrameByteCount(_segmentFrames);
 
-            _waveIn = new WaveIn();
+            _waveIn = new WaveIn(WaveCallbackInfo.FunctionCallback());
             _waveIn.BufferMilliseconds = 50;
             _waveIn.DeviceNumber = comboBox1.SelectedIndex;
             _waveIn.DataAvailable += _waveIn_DataAvailable;
@@ -71,7 +71,7 @@ namespace OpusDemo
 
             _playBuffer = new BufferedWaveProvider(new WaveFormat(48000, 16, 1));
 
-            _waveOut = new WaveOut();
+            _waveOut = new WaveOut(WaveCallbackInfo.FunctionCallback());
             _waveOut.DeviceNumber = comboBox2.SelectedIndex;
             _waveOut.Init(_playBuffer);
 
@@ -103,9 +103,10 @@ namespace OpusDemo
                 byte[] segment = new byte[byteCap];
                 for (int j = 0; j < segment.Length; j++)
                     segment[j] = soundBuffer[(i*byteCap) + j];
-                byte[] encodedSound = _encoder.Encode(segment);
-                byte[] decodedSound = _decoder.Decode(encodedSound);
-                _playBuffer.AddSamples(decodedSound, 0, decodedSound.Length);
+                int len;
+                byte[] buff = _encoder.Encode(segment, segment.Length, out len);
+                buff = _decoder.Decode(buff, len, out len);
+                _playBuffer.AddSamples(buff, 0, len);
             }
         }
 
