@@ -60,10 +60,12 @@ namespace FragLabs.Audio.Codecs
             int frames = FrameCount(inputPcmSamples);
             IntPtr encodedPtr;
             byte[] encoded = new byte[MaxDataBytes];
+            int length = 0;
             fixed (byte* benc = encoded)
+            {
                 encodedPtr = new IntPtr((void*)benc);
-
-            int length = API.opus_encode(_encoder, inputPcmSamples, frames, encodedPtr, encoded.Length);
+                length = API.opus_encode(_encoder, inputPcmSamples, frames, encodedPtr, encoded.Length);
+            }
             if (length < 0)
                 throw new Exception("Encoding failed - " + ((Errors)length).ToString());
 

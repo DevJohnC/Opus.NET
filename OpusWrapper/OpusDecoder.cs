@@ -59,10 +59,12 @@ namespace FragLabs.Audio.Codecs
             byte[] decoded = new byte[MaxDataBytes];
             rand.NextBytes(decoded);
             int frameCount = FrameCount(MaxDataBytes);
+            int length = 0;
             fixed (byte* bdec = decoded)
+            {
                 decodedPtr = new IntPtr((void*)bdec);
-
-            int length = API.opus_decode(_decoder, inputOpusData, inputOpusData.Length, decodedPtr, frameCount, 0);
+                length = API.opus_decode(_decoder, inputOpusData, inputOpusData.Length, decodedPtr, frameCount, 0);
+            }
             if (length < 0)
                 throw new Exception("Decoding failed - " + ((Errors)length).ToString());
 
