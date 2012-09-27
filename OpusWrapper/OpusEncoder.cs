@@ -121,6 +121,31 @@ namespace FragLabs.Audio.Codecs
         /// </summary>
         public int MaxDataBytes { get; set; }
 
+        /// <summary>
+        /// Gets or sets the bitrate setting of the encoding.
+        /// </summary>
+        public int Bitrate
+        {
+            get
+            {
+                if (disposed)
+                    throw new ObjectDisposedException("OpusEncoder");
+                int bitrate;
+                var ret = API.opus_encoder_ctl(_encoder, Ctl.GetBitrateRequest, out bitrate);
+                if (ret < 0)
+                    throw new Exception("Encoder error - " + ((Errors)ret).ToString());
+                return bitrate;
+            }
+            set
+            {
+                if (disposed)
+                    throw new ObjectDisposedException("OpusEncoder");
+                var ret = API.opus_encoder_ctl(_encoder, Ctl.SetBitrateRequest, value);
+                if (ret < 0)
+                    throw new Exception("Encoder error - " + ((Errors)ret).ToString());
+            }
+        }
+
         ~OpusEncoder()
         {
             Dispose();

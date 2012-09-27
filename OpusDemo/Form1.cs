@@ -60,6 +60,7 @@ namespace OpusDemo
         {
             _segmentFrames = 960;
             _encoder = OpusEncoder.Create(48000, 1, FragLabs.Audio.Codecs.Opus.Application.Voip);
+            _encoder.Bitrate = 12800;
             _decoder = OpusDecoder.Create(48000, 1);
             _bytesPerSegment = _encoder.FrameByteCount(_segmentFrames);
 
