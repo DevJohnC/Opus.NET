@@ -55,12 +55,17 @@ namespace OpusDemo
         OpusDecoder _decoder;
         int _segmentFrames;
         int _bytesPerSegment;
+        ulong _bytesSent;
+        DateTime _startTime;
+        Timer _timer = null;
 
         void StartEncoding()
         {
+            _startTime = DateTime.Now;
+            _bytesSent = 0;
             _segmentFrames = 960;
             _encoder = OpusEncoder.Create(48000, 1, FragLabs.Audio.Codecs.Opus.Application.Voip);
-            _encoder.Bitrate = 12800;
+            _encoder.Bitrate = 8192;
             _decoder = OpusDecoder.Create(48000, 1);
             _bytesPerSegment = _encoder.FrameByteCount(_segmentFrames);
 
@@ -78,6 +83,21 @@ namespace OpusDemo
 
             _waveOut.Play();
             _waveIn.StartRecording();
+
+            if (_timer == null)
+            {
+                _timer = new Timer();
+                _timer.Interval = 1000;
+                _timer.Tick += _timer_Tick;
+            }
+            _timer.Start();
+        }
+
+        void _timer_Tick(object sender, EventArgs e)
+        {
+            var timeDiff = DateTime.Now - _startTime;
+            var bytesPerSecond = _bytesSent / timeDiff.TotalSeconds;
+            Console.WriteLine("{0} Bps", bytesPerSecond);
         }
 
         byte[] _notEncodedBuffer = new byte[0];
@@ -106,6 +126,7 @@ namespace OpusDemo
                     segment[j] = soundBuffer[(i*byteCap) + j];
                 int len;
                 byte[] buff = _encoder.Encode(segment, segment.Length, out len);
+                _bytesSent += (ulong)len;
                 buff = _decoder.Decode(buff, len, out len);
                 _playBuffer.AddSamples(buff, 0, len);
             }
@@ -113,6 +134,7 @@ namespace OpusDemo
 
         void StopEncoding()
         {
+            _timer.Stop();
             _waveIn.StopRecording();
             _waveIn.Dispose();
             _waveIn = null;
