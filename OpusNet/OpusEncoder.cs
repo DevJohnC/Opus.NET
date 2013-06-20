@@ -20,7 +20,7 @@ namespace OpusNet
         /// <param name="inputChannels">Number of channels (1 or 2) in input signal.</param>
         /// <param name="application">Coding mode.</param>
         /// <returns>A new <c>OpusEncoder</c></returns>
-        public static OpusEncoder Create(int inputSamplingRate, int inputChannels, Application application)
+        public static OpusEncoder Create(int inputSamplingRate, int inputChannels, OpusApplication application)
         {
             if (inputSamplingRate != 8000 &&
                 inputSamplingRate != 12000 &&
@@ -42,7 +42,7 @@ namespace OpusNet
 
         private IntPtr _encoder;
 
-        private OpusEncoder(IntPtr encoder, int inputSamplingRate, int inputChannels, Application application)
+        private OpusEncoder(IntPtr encoder, int inputSamplingRate, int inputChannels, OpusApplication application)
         {
             _encoder = encoder;
             InputSamplingRate = inputSamplingRate;
@@ -117,7 +117,7 @@ namespace OpusNet
         /// <summary>
         /// Gets the coding mode of the encoder.
         /// </summary>
-        public Application Application { get; private set; }
+        public OpusApplication Application { get; private set; }
 
         /// <summary>
         /// Gets or sets the size of memory allocated for reading encoded data.

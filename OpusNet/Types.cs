@@ -11,7 +11,7 @@ namespace OpusNet
     /// <summary>
     /// Supported coding modes.
     /// </summary>
-    public enum Application
+    public enum OpusApplication
     {
         /// <summary>
         /// Best for most VoIP/videoconference applications where listening quality and intelligibility matter most.
