@@ -7,6 +7,8 @@ namespace OpusNet
     /// </summary>
     public class OpusDecoder : IDisposable
     {
+        private IntPtr _decoder;
+        
         static OpusDecoder()
         {
             Wrapper.Initialize();
@@ -18,7 +20,7 @@ namespace OpusNet
         /// <param name="outputSampleRate">Sample rate to decode at (Hz). This must be one of 8000, 12000, 16000, 24000, or 48000.</param>
         /// <param name="outputChannels">Number of channels to decode.</param>
         /// <returns>A new <c>OpusDecoder</c>.</returns>
-        public static OpusDecoder Create(int outputSampleRate, int outputChannels)
+        public OpusDecoder(int outputSampleRate, int outputChannels)
         {
             if (outputSampleRate != 8000 &&
                 outputSampleRate != 12000 &&
@@ -30,22 +32,13 @@ namespace OpusNet
                 throw new ArgumentOutOfRangeException("inputChannels");
 
             IntPtr error;
-            IntPtr decoder = Wrapper.opus_decoder_create(outputSampleRate, outputChannels, out error);
+            this._decoder = Wrapper.opus_decoder_create(outputSampleRate, outputChannels, out error);
             if ((Errors)error != Errors.OK)
-            {
                 throw new Exception("Exception occured while creating decoder");
-            }
-            return new OpusDecoder(decoder, outputSampleRate, outputChannels);
-        }
 
-        private IntPtr _decoder;
-
-        private OpusDecoder(IntPtr decoder, int outputSamplingRate, int outputChannels)
-        {
-            _decoder = decoder;
-            OutputSamplingRate = outputSamplingRate;
-            OutputChannels = outputChannels;
-            MaxDataBytes = 4000;
+            this.OutputSamplingRate = outputSampleRate;
+            this.OutputChannels = outputChannels;
+            this.MaxDataBytes = 4000;
         }
 
         /// <summary>

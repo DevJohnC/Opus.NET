@@ -64,9 +64,9 @@ namespace OpusDemo
             _startTime = DateTime.Now;
             _bytesSent = 0;
             _segmentFrames = 960;
-            _encoder = OpusEncoder.Create(48000, 1, OpusNet.OpusApplication.Voip);
+            _encoder = new OpusEncoder(48000, 1, OpusNet.OpusApplication.Voip);
             _encoder.Bitrate = 8192;
-            _decoder = OpusDecoder.Create(48000, 1);
+            _decoder = new OpusDecoder(48000, 1);
             _bytesPerSegment = _encoder.FrameByteCount(_segmentFrames);
 
             _waveIn = new WaveIn(WaveCallbackInfo.FunctionCallback());

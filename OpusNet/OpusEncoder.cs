@@ -8,6 +8,9 @@ namespace OpusNet
     /// </summary>
     public class OpusEncoder : IDisposable
     {
+        private IntPtr _encoder;
+
+
         static OpusEncoder()
         {
             Wrapper.Initialize();
@@ -20,35 +23,27 @@ namespace OpusNet
         /// <param name="inputChannels">Number of channels (1 or 2) in input signal.</param>
         /// <param name="application">Coding mode.</param>
         /// <returns>A new <c>OpusEncoder</c></returns>
-        public static OpusEncoder Create(int inputSamplingRate, int inputChannels, OpusApplication application)
+        public OpusEncoder(int inputSamplingRate, int inputChannels, OpusApplication application)
         {
             if (inputSamplingRate != 8000 &&
-                inputSamplingRate != 12000 &&
-                inputSamplingRate != 16000 &&
-                inputSamplingRate != 24000 &&
-                inputSamplingRate != 48000)
+                            inputSamplingRate != 12000 &&
+                            inputSamplingRate != 16000 &&
+                            inputSamplingRate != 24000 &&
+                            inputSamplingRate != 48000)
                 throw new ArgumentOutOfRangeException("inputSamplingRate");
             if (inputChannels != 1 && inputChannels != 2)
                 throw new ArgumentOutOfRangeException("inputChannels");
 
             IntPtr error;
-            IntPtr encoder = Wrapper.opus_encoder_create(inputSamplingRate, inputChannels, (int)application, out error);
+            this._encoder = Wrapper.opus_encoder_create(inputSamplingRate, inputChannels, (int)application, out error);
+
             if ((Errors)error != Errors.OK)
-            {
                 throw new Exception("Exception occured while creating encoder");
-            }
-            return new OpusEncoder(encoder, inputSamplingRate, inputChannels, application);
-        }
 
-        private IntPtr _encoder;
-
-        private OpusEncoder(IntPtr encoder, int inputSamplingRate, int inputChannels, OpusApplication application)
-        {
-            _encoder = encoder;
-            InputSamplingRate = inputSamplingRate;
-            InputChannels = inputChannels;
-            Application = application;
-            MaxDataBytes = 4000;
+            this.InputSamplingRate = inputSamplingRate;
+            this.InputChannels = inputChannels;
+            this.Application = application;
+            this.MaxDataBytes = 4000;
         }
 
         /// <summary>
