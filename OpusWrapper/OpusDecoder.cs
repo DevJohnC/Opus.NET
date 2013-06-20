@@ -1,13 +1,17 @@
 ﻿using System;
-using FragLabs.Audio.Codecs.Opus;
 
-namespace FragLabs.Audio.Codecs
+namespace OpusNet
 {
     /// <summary>
     /// Opus audio decoder.
     /// </summary>
     public class OpusDecoder : IDisposable
     {
+        static OpusDecoder()
+        {
+            Wrapper.Initialize();
+        }
+
         /// <summary>
         /// Creates a new Opus decoder.
         /// </summary>
@@ -26,7 +30,7 @@ namespace FragLabs.Audio.Codecs
                 throw new ArgumentOutOfRangeException("inputChannels");
 
             IntPtr error;
-            IntPtr decoder = API.opus_decoder_create(outputSampleRate, outputChannels, out error);
+            IntPtr decoder = Wrapper.opus_decoder_create(outputSampleRate, outputChannels, out error);
             if ((Errors)error != Errors.OK)
             {
                 throw new Exception("Exception occured while creating decoder");
@@ -63,7 +67,7 @@ namespace FragLabs.Audio.Codecs
             fixed (byte* bdec = decoded)
             {
                 decodedPtr = new IntPtr((void*)bdec);
-                length = API.opus_decode(_decoder, inputOpusData, dataLength, decodedPtr, frameCount, 0);
+                length = Wrapper.opus_decode(_decoder, inputOpusData, dataLength, decodedPtr, frameCount, 0);
             }
             decodedLength = length * 2;
             if (length < 0)
@@ -115,7 +119,7 @@ namespace FragLabs.Audio.Codecs
 
             if (_decoder != IntPtr.Zero)
             {
-                API.opus_decoder_destroy(_decoder);
+                Wrapper.opus_decoder_destroy(_decoder);
                 _decoder = IntPtr.Zero;
             }
 

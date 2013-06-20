@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using FragLabs.Audio.Codecs.Opus;
 
-namespace FragLabs.Audio.Codecs
+namespace OpusNet
 {
     /// <summary>
     /// Opus codec wrapper.
     /// </summary>
     public class OpusEncoder : IDisposable
     {
+        static OpusEncoder()
+        {
+            Wrapper.Initialize();
+        }
+
         /// <summary>
         /// Creates a new Opus encoder.
         /// </summary>
@@ -28,7 +32,7 @@ namespace FragLabs.Audio.Codecs
                 throw new ArgumentOutOfRangeException("inputChannels");
 
             IntPtr error;
-            IntPtr encoder = API.opus_encoder_create(inputSamplingRate, inputChannels, (int)application, out error);
+            IntPtr encoder = Wrapper.opus_encoder_create(inputSamplingRate, inputChannels, (int)application, out error);
             if ((Errors)error != Errors.OK)
             {
                 throw new Exception("Exception occured while creating encoder");
@@ -66,7 +70,7 @@ namespace FragLabs.Audio.Codecs
             fixed (byte* benc = encoded)
             {
                 encodedPtr = new IntPtr((void*)benc);
-                length = API.opus_encode(_encoder, inputPcmSamples, frames, encodedPtr, sampleLength);
+                length = Wrapper.opus_encode(_encoder, inputPcmSamples, frames, encodedPtr, sampleLength);
             }
             encodedLength = length;
             if (length < 0)
@@ -131,7 +135,7 @@ namespace FragLabs.Audio.Codecs
                 if (disposed)
                     throw new ObjectDisposedException("OpusEncoder");
                 int bitrate;
-                var ret = API.opus_encoder_ctl(_encoder, Ctl.GetBitrateRequest, out bitrate);
+                var ret = Wrapper.opus_encoder_ctl2(_encoder, Ctl.GetBitrateRequest, out bitrate);
                 if (ret < 0)
                     throw new Exception("Encoder error - " + ((Errors)ret).ToString());
                 return bitrate;
@@ -140,7 +144,7 @@ namespace FragLabs.Audio.Codecs
             {
                 if (disposed)
                     throw new ObjectDisposedException("OpusEncoder");
-                var ret = API.opus_encoder_ctl(_encoder, Ctl.SetBitrateRequest, value);
+                var ret = Wrapper.opus_encoder_ctl1(_encoder, Ctl.SetBitrateRequest, value);
                 if (ret < 0)
                     throw new Exception("Encoder error - " + ((Errors)ret).ToString());
             }
@@ -161,7 +165,7 @@ namespace FragLabs.Audio.Codecs
 
             if (_encoder != IntPtr.Zero)
             {
-                API.opus_encoder_destroy(_encoder);
+                Wrapper.opus_encoder_destroy(_encoder);
                 _encoder = IntPtr.Zero;
             }
 

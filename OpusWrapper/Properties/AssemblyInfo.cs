@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("OpusWrapper")]
+[assembly: AssemblyTitle("OpusNet")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("OpusWrapper")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2012")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("OpusNet")]
+[assembly: AssemblyCopyright("Copyright ©")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -1,4 +1,4 @@
-# Open Interactive Audio Codec
+# Open Interactive Audio Codec 
 
 ## Overview
 
@@ -29,6 +29,8 @@ Opus.NET is a managed wrapper around the native Opus library. Included in the re
 The WinForms demo app makes use of the excellent NAudio library.
 
 Opus.NET is licensed under the MIT license.
+
+Native opus library version is opus-1.0.2.
 
 # Licenses
 
