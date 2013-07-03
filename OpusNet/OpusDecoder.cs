@@ -62,7 +62,7 @@ namespace OpusNet
                 decodedPtr = new IntPtr((void*)bdec);
                 length = Wrapper.opus_decode(_decoder, inputOpusData, dataLength, decodedPtr, frameCount, 0);
             }
-            decodedLength = length * 2;
+            decodedLength = length * 2 * OutputChannels;
             if (length < 0)
                 throw new Exception("Decoding failed - " + ((Errors)length).ToString());
 
