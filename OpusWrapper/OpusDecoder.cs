@@ -47,7 +47,7 @@ namespace FragLabs.Audio.Codecs
         /// <summary>
         /// Produces PCM samples from Opus encoded data.
         /// </summary>
-        /// <param name="inputOpusData">Opus encoded data to decode.</param>
+        /// <param name="inputOpusData">Opus encoded data to decode, null for dropped packet.</param>
         /// <param name="dataLength">Length of data to decode.</param>
         /// <param name="decodedLength">Set to the length of the decoded sample data.</param>
         /// <returns>PCM audio samples.</returns>
@@ -63,7 +63,11 @@ namespace FragLabs.Audio.Codecs
             fixed (byte* bdec = decoded)
             {
                 decodedPtr = new IntPtr((void*)bdec);
-                length = API.opus_decode(_decoder, inputOpusData, dataLength, decodedPtr, frameCount, 0);
+
+                if (inputOpusData != null)
+                    length = API.opus_decode(_decoder, inputOpusData, dataLength, decodedPtr, frameCount, 0);
+                else
+                    length = API.opus_decode(_decoder, null, 0, decodedPtr, frameCount, (ForwardErrorCorrection) ? 1 : 0);
             }
             decodedLength = length * 2;
             if (length < 0)
@@ -99,6 +103,11 @@ namespace FragLabs.Audio.Codecs
         /// Gets or sets the size of memory allocated for decoding data.
         /// </summary>
         public int MaxDataBytes { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether forward error correction is enabled or not.
+        /// </summary>
+        public bool ForwardErrorCorrection { get; set; }
 
         ~OpusDecoder()
         {
