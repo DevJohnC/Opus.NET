@@ -146,6 +146,35 @@ namespace FragLabs.Audio.Codecs
             }
         }
 
+        /// <summary>
+        /// Gets or sets whether Forward Error Correction is enabled.
+        /// </summary>
+        public bool ForwardErrorCorrection
+        {
+            get
+            {
+                if (_encoder == IntPtr.Zero)
+                    throw new ObjectDisposedException("OpusEncoder");
+
+                int fec;
+                int ret = API.opus_encoder_ctl(_encoder, Ctl.GetInbandFECRequest, out fec);
+                if (ret < 0)
+                    throw new Exception("Encoder error - " + ((Errors) ret).ToString());
+
+                return fec > 0;
+            }
+
+            set
+            {
+                if (_encoder == IntPtr.Zero)
+                    throw new ObjectDisposedException("OpusEncoder");
+
+                var ret = API.opus_encoder_ctl(_encoder, Ctl.SetInbandFECRequest, value ? 1 : 0);
+                if (ret < 0)
+                    throw new Exception("Encoder error - " + ((Errors) ret).ToString());
+            }
+        }
+
         ~OpusEncoder()
         {
             Dispose();
